@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Birds of Western &amp; Nyanza Kenya</title>
+<style>
+:root{--bg:#f4f1e8;--card:#fff;--ink:#1f2a1f;--mute:#5b6b5b;--acc:#2f6b3a;--line:#dcd6c3}
+@media (prefers-color-scheme:dark){:root{--bg:#141a14;--card:#1d261d;--ink:#e8efe3;--mute:#9db09d;--acc:#7fc98a;--line:#2f3b2f}}
+*{box-sizing:border-box}
+body{margin:0;font-family:Georgia,serif;background:var(--bg);color:var(--ink)}
+header{padding:2.5rem 1rem 1rem;text-align:center}
+h1{margin:0;font-size:2rem}
+header p{color:var(--mute);max-width:640px;margin:.5rem auto}
+nav{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;padding:.5rem}
+button{font:inherit;padding:.45rem 1rem;border:1px solid var(--acc);background:transparent;color:var(--acc);border-radius:99px;cursor:pointer}
+button.on{background:var(--acc);color:var(--bg)}
+input{font:inherit;padding:.45rem 1rem;border:1px solid var(--line);border-radius:99px;background:var(--card);color:var(--ink);min-width:220px}
+main{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:1rem;padding:1rem;max-width:1200px;margin:auto}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
+.img{height:190px;background:var(--line);display:flex;align-items:center;justify-content:center;font-size:3rem}
+.img img{width:100%;height:100%;object-fit:cover}
+.body{padding:.8rem 1rem 1rem}
+.body h3{margin:0;font-size:1.1rem}
+.body em{color:var(--mute);font-size:.9rem}
+.body p{font-size:.88rem;line-height:1.45;margin:.5rem 0 0}
+.tag{display:inline-block;font-size:.7rem;color:var(--acc);border:1px solid var(--line);border-radius:99px;padding:.1rem .5rem;margin-top:.5rem}
+footer{text-align:center;color:var(--mute);font-size:.8rem;padding:1.5rem}
+</style>
+</head>
+<body>
+<header>
+<h1>🐦 Birds of Western &amp; Nyanza Kenya</h1>
+<p>Species from two checklists: a Western/Nyanza list and the Got Ramogi Sacred Forest (1993–1994). Photos and descriptions load from Wikipedia when you open this page online.</p>
+</header>
+<nav>
+<button class="on" data-f="all">All</button>
+<button data-f="West">Western &amp; Nyanza</button>
+<button data-f="Ramogi">Got Ramogi Forest</button>
+<input id="q" placeholder="Search name…">
+</nav>
+<main id="grid"></main>
+<footer>Images &amp; text: Wikipedia / Wikimedia Commons, under their respective licences.</footer>
+<script>
+const W="West",R="Ramogi";
+// [scientific, common, group]
+const B=[
+["Ploceus nigricollis","Black-necked Weaver",W],["Cryptospiza salvadorii","Abyssinian Crimsonwing",W],["Lagonosticta rubricata","African Firefinch",W],["Estrilda rhodopyga","Crimson-rumped Waxbill",W],["Uraeginthus bengalus","Red-cheeked Cordon-bleu",W],["Uraeginthus ianthinogaster","Purple Grenadier",W],["Serinus koliensis","Papyrus Canary",W],["Halcyon leucocephala","Grey-headed Kingfisher",W],["Serinus mozambicus","Yellow-fronted Canary",W],
+["Bubulcus ibis","Cattle Egret",R],["Scopus umbretta","Hamerkop",R],["Ciconia ciconia","White Stork",R],["Bostrychia hagedash","Hadada Ibis",R],["Circus ranivorus","African Marsh Harrier",R],["Buteo augur","Augur Buzzard",R],["Haliaeetus vocifer","African Fish Eagle",R],["Aquila rapax","Tawny Eagle",R],["Numida meleagris","Helmeted Guineafowl",R],["Amaurornis flavirostra","Black Crake",R],["Balearica regulorum","Grey Crowned Crane",R],["Turtur tympanistria","Tambourine Dove",R],["Oena capensis","Namaqua Dove",R],["Streptopelia semitorquata","Red-eyed Dove",R],["Streptopelia senegalensis","Laughing Dove",R],["Musophaga rossae","Ross's Turaco",R],["Crinifer leucogaster","White-bellied Go-away-bird",R],["Centropus grillii","Black Coucal",R],["Strix woodfordii","African Wood Owl",R],["Apus niansae","Nyanza Swift",R],["Colius striatus","Speckled Mousebird",R],["Ispidina picta","African Pygmy Kingfisher",R],["Merops albicollis","White-throated Bee-eater",R],["Merops variegatus","Blue-breasted Bee-eater",R],["Coracias naevius","Rufous-crowned Roller",R],["Pogoniulus bilineatus","Yellow-rumped Tinkerbird",R],["Pogoniulus pusillus","Red-fronted Tinkerbird",R],["Lybius leucocephalus","White-headed Barbet",R],["Indicator indicator","Greater Honeyguide",R],["Dendropicos namaquus","Bearded Woodpecker",R],["Illadopsis cleaveri","Black-lored Babbler",R],["Mirafra albicauda","White-tailed Lark",R],["Motacilla clara","Mountain Wagtail",R],["Anthus cinnamomeus","Grassland Pipit",R],["Macronyx croceus","Yellow-throated Longclaw",R],["Pycnonotus barbatus","Common Bulbul",R],["Cossypha natalensis","Red-capped Robin-Chat",R],["Turdus olivaceus","Olive Thrush",R],["Bradypterus lopezi","Evergreen Forest Warbler",R],["Camaroptera brevicaudata","Grey-backed Camaroptera",R],["Eminia lepida","Grey-capped Warbler",R],["Terpsiphone viridis","African Paradise Flycatcher",R],["Batis molitor","Chinspot Batis",R],["Lanius excubitoroides","Grey-backed Fiscal",R],["Laniarius erythrogaster","Black-headed Gonolek",R],["Laniarius mufumbiri","Papyrus Gonolek",R],["Oriolus larvatus","Black-headed Oriole",R],["Lamprotornis purpureus","Purple Starling",R],["Lamprotornis chalybaeus","Greater Blue-eared Starling",R],["Chalcomitra chloropygia","Olive-bellied Sunbird",R],["Cinnyris mediocris","Eastern Double-collared Sunbird",R],["Cinnyris mariquensis","Marico Sunbird",R],["Nectarinia kilimensis","Bronze Sunbird",R]
+];
+const grid=document.getElementById("grid");
+const cards=B.map(([sci,com,g])=>{
+  const d=document.createElement("div");d.className="card";d.dataset.g=g;d.dataset.s=(sci+" "+com).toLowerCase();
+  d.innerHTML=`<div class="img">🐦</div><div class="body"><h3>${com}</h3><em>${sci}</em><p>Loading description…</p><span class="tag">${g==W?"Western &amp; Nyanza":"Got Ramogi Forest"}</span></div>`;
+  grid.appendChild(d);return {d,sci,com};
+});
+async function wiki(term){
+  const u="https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*&generator=search&gsrlimit=1&gsrsearch="+encodeURIComponent(term)+"&prop=pageimages|extracts&piprop=thumbnail&pithumbsize=500&exintro=1&explaintext=1&exsentences=3";
+  const r=await fetch(u);const j=await r.json();
+  const p=j.query&&Object.values(j.query.pages)[0];return p||null;
+}
+async function load({d,sci,com}){
+  let p=null;
+  try{p=await wiki('"'+sci+'"');if(!p||!p.thumbnail)p=(await wiki(com+" bird"))||p;}catch(e){}
+  const t=d.querySelector("p");
+  if(p){
+    if(p.thumbnail){const im=document.createElement("img");im.src=p.thumbnail.source;im.alt=com;im.loading="lazy";d.querySelector(".img").replaceChildren(im);}
+    t.textContent=p.extract||"No description found.";
+  }else t.textContent="Description unavailable (check your internet connection).";
+}
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){io.unobserve(e.target);load(cards.find(c=>c.d===e.target));}}),{rootMargin:"300px"});
+cards.forEach(c=>io.observe(c.d));
+let f="all";
+function filt(){const q=document.getElementById("q").value.toLowerCase();cards.forEach(({d})=>{d.style.display=(f=="all"||d.dataset.g==f)&&d.dataset.s.includes(q)?"":"none"})}
+document.querySelectorAll("button").forEach(b=>b.onclick=()=>{document.querySelectorAll("button").forEach(x=>x.classList.remove("on"));b.classList.add("on");f=b.dataset.f;filt()});
+document.getElementById("q").oninput=filt;
+</script>
+</body>
+</html>
